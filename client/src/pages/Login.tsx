@@ -15,20 +15,9 @@ export default function Login() {
   const [googleClientId, setGoogleClientId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch configuration settings to check if real Google Client ID is active
-    const checkGoogleConfig = async () => {
-      try {
-        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || null;
-        setGoogleClientId(clientId);
-        
-        if (clientId) {
-          loadGoogleGSI(clientId);
-        }
-      } catch (err) {
-        console.warn('Failed to detect Google Client ID config', err);
-      }
-    };
-    checkGoogleConfig();
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1014229459015-v0dubaek4spmlmprar5crttajfrqk568.apps.googleusercontent.com';
+    setGoogleClientId(clientId);
+    loadGoogleGSI(clientId);
   }, []);
 
   const loadGoogleGSI = (clientId: string) => {
@@ -67,22 +56,7 @@ export default function Login() {
     }
   };
 
-  const handleMockGoogleLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      // Simulate a successful Google Credential token callback
-      const mockCredential = 'mock_google_id_token_' + Math.random().toString(36).substring(7);
-      const data = await api.googleLogin(mockCredential);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/');
-    } catch (err: any) {
-      setError(err.message || 'Sandbox Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,25 +185,8 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            {googleClientId ? (
-              <div id="google-signin-btn" className="w-full flex justify-center" />
-            ) : (
-              <button
-                type="button"
-                onClick={handleMockGoogleLogin}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-dark-950 hover:bg-dark-850 text-white border border-dark-800 hover:border-dark-700 rounded-xl py-3 text-xs font-bold transition active:scale-[0.98]"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.58 14.99 1 12 1 7.35 1 3.37 3.65 1.42 7.51l3.79 2.94C6.11 7.23 8.84 5.04 12 5.04z" />
-                  <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.44c-.28 1.47-1.11 2.71-2.36 3.55l3.66 2.84c2.14-1.97 3.75-4.88 3.75-8.54z" />
-                  <path fill="#FBBC05" d="M5.21 10.45c-.24-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29L1.42 2.93C.52 4.73 0 6.8 0 9s.52 4.27 1.42 6.07l3.79-2.93z" />
-                  <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.66-2.84c-1.01.68-2.31 1.09-4.3 1.09-3.16 0-5.89-2.19-6.79-5.41L1.42 15.86C3.37 19.72 7.35 22.35 12 23z" />
-                </svg>
-                <span>Sign In with Google (Sandbox Demo)</span>
-              </button>
-            )}
+          <div className="space-y-3 flex justify-center">
+            <div id="google-signin-btn" className="w-full flex justify-center" />
           </div>
 
           <div className="mt-6 text-center">
