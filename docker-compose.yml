@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Database store container
+  mongodb:
+    image: mongo:latest
+    container_name: meetmind-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - meetmind-network
+
+  # Caching server container
+  redis:
+    image: redis:alpine
+    container_name: meetmind-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - meetmind-network
+
+  # Express TypeScript Server container
+  server:
+    build: ./server
+    container_name: meetmind-server
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/meetmind
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=meetmind_secret_key_123
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - meetmind-network
+
+  # React Client application container
+  client:
+    build: ./client
+    container_name: meetmind-client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - meetmind-network
+
+volumes:
+  mongo-data:
+  redis-data:
+
+networks:
+  meetmind-network:
+    driver: bridge

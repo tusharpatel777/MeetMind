@@ -1,0 +1,21 @@
+# Dependency directory
+node_modules/
+
+# Compiled production build directory
+dist/
+
+# Local Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Local meeting audio recording uploads
+uploads/
+
+# TypeScript build caches
+*.tsbuildinfo
+
+# OS Metadata files
+.DS_Store
+Thumbs.db
